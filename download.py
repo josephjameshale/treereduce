@@ -35,7 +35,7 @@ def make_run_list(input_file):
 	l = []
 	with open(input_file,'r') as fh:
 		for line in fh:
-			data_type,id = line.strip().split('\t')
+			data_type,id,tree = line.strip().split('\t')
 			if data_type == 'run':
 				l.append(id)
 			elif data_type == 'assembly':
