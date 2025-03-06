@@ -3,14 +3,13 @@ import random
 import subprocess
 import os
 
-# main still needs a report or output about how many tips were removed from each tree
 
 def main(input_file,output_file,conversion_table):
 	cdict = make_conv(conversion_table)
 	with open(input_file,'r') as fh_in,open(output_file,'w') as fh_out:
 		for line in fh_in:
 			isolate,tree = line.strip().split('\t')
-			run_data = cdict[isolate]
+			run_data = cdict[isolate] + [tree]
 			_ = fh_out.write('\t'.join(run_data) + '\n')
 			if run_data[1] == '':
 				print(run_data)
@@ -38,8 +37,8 @@ def find_header_index(list_inp,search_pattern):
 		quit(1)
 
 if __name__ == "__main__":
-	inp = 'results/results_t200/summary/isolate_list_t200.tsv'
-	outp = 'sra_run_list_t200.tsv'
+	inp = 'results/results_t50/summary/isolate_list_t50.tsv'
+	outp = 'sra_run_list_t50.tsv'
 	conv = 'c_auris_isolates_browser_all_02-17-25.tsv'
 	main(input_file=inp,output_file=outp,conversion_table=conv)
 
