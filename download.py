@@ -96,17 +96,26 @@ def make_finished_assembly_list(raw_data_dir):
 
 
 if __name__ == "__main__":
-	inp = '/scratch/esnitkin_root/esnitkin0/jjhale/treereduce/sra_run_list_t40.tsv'
-	outp = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t40_03-19-25/'
+	inp = '/scratch/esnitkin_root/esnitkin0/jjhale/treereduce/sra_run_list_t30.tsv'
+	outp = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/'
 	temp = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/temp/'
+	outp_assembly = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/assembly/'
 	for p in [outp,temp]:
 		if not os.path.isdir(p):
 			subprocess.run(['mkdir',p])
-	raw_data_dir1 = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t40_03-19-25/'
-	raw_data_dir2 = '/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/passed_qc_samples'
-	raw_data_dir3 = '/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/failed_qc_samples'
+	raw_data_list = []
+	# location of currently-downloaded reads for this batch
+	raw_data_list.append('/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/')
+	# location of passed and failed t60 samples
+	raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/passed_qc_samples')
+	raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/failed_qc_samples')
+	# location of passed and failed t40 samples
+	raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-28_ncbiPathogen_t40_v1/passed_qc_samples')
+	raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-28_ncbiPathogen_t40_v1/failed_qc_samples')
+	# location of currently-downloaded assemblies for this batch
 	raw_assembly_dir1 = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t40_03-19-25/assemblies/'
-	finl = make_finished_list([raw_data_dir1,raw_data_dir2,raw_data_dir3])
+	# use these paths to determine the samples that have already been downloaded
+	finl = make_finished_list(raw_data_list)
 	finl_a = make_finished_assembly_list(raw_assembly_dir1)
 	finl.update(finl_a)
 	main(input_file=inp,temp_dir=temp,output_dir=outp,finished_list = finl)

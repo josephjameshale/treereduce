@@ -37,8 +37,8 @@ def find_header_index(list_inp,search_pattern):
 		quit(1)
 
 if __name__ == "__main__":
-	inp = 'results/results_t40/summary/isolate_list_t40.tsv'
-	outp = 'sra_run_list_t40.tsv'
+	inp = 'results/results_t30/summary/isolate_list_t30.tsv'
+	outp = 'sra_run_list_t30.tsv'
 	conv = 'c_auris_isolates_browser_all_02-17-25.tsv'
 	main(input_file=inp,output_file=outp,conversion_table=conv)
 
