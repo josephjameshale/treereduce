@@ -6,7 +6,8 @@ import re
 def main(input_file,temp_dir,output_dir,finished_list):
 	# ensure temp dir is empty
 	for f in os.listdir(temp_dir):
-		os.remove(temp_dir + f)
+		subprocess.run(['rm','-r',temp_dir + f])
+		#os.remove(temp_dir + f)
 	# generate list of runs to download
 	run_list = make_run_list(input_file)
 	run_list = [(run_name,data_type) for run_name,data_type in run_list if run_name not in finished_list]
