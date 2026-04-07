@@ -77,8 +77,9 @@ def make_run_list(input_file):
 def make_finished_list(dirlist):
 	# this looks at multiple directories and returns a list of the finished accession numbers present in them
 	finished_list = set()
-	for dirpath in dirlist:
-		finished_list.update(check_run_list(dirpath))
+	if dirlist is not None:
+		for dirpath in dirlist:
+			finished_list.update(check_run_list(dirpath))
 	return(finished_list)
 
 def check_run_list(raw_data_dir):
