@@ -1,9 +1,9 @@
-
+import argparse
 import subprocess
 import os
 import re
 
-def main(input_file,temp_dir,output_dir,finished_list):
+def master(input_file,temp_dir,output_dir,finished_list):
 	# ensure temp dir is empty
 	for f in os.listdir(temp_dir):
 		subprocess.run(['rm','-r',temp_dir + f])
@@ -84,44 +84,48 @@ def make_finished_list(dirlist):
 def check_run_list(raw_data_dir):
 	finished_list = set()
 	for filename in os.listdir(raw_data_dir):
-		filename2 = re.split('_R[1,2].fastq.gz',filename)[0]
-		finished_list.add(filename2)
-	return(finished_list)
-
-def make_finished_assembly_list(raw_data_dir):
-	finished_list = set()
-	for filename in os.listdir(raw_data_dir):
-		if os.path.isdir(raw_data_dir + filename):
+		if '.fastq.gz' in filename:
+			filename2 = re.split('_R[1,2].fastq.gz',filename)[0]
+			finished_list.add(filename2)
+		elif os.path.isdir(raw_data_dir + filename):
 			finished_list.add(filename)
 	return(finished_list)
 
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--input','-i',type=str,
+        help='''Provide a one-column tab-separated file consisting of run types, accession numbers, and phylogeny trees. See the provided example for formatting.''',
+        required=True
+        )
+    parser.add_argument(
+        '--temp','-t',type=str,
+        help='''Provide a path to a temporary directory.''',
+        default='./temp/'
+        )
+    parser.add_argument(
+        '--output_dir','-od',type=str,
+        help='''Provide a path to a directory where the downloaded files will be stored.''',
+        required=True
+        )
+    parser.add_argument(
+        '--finished_directory_list_reads','-fdlr',type=str,nargs='+',
+        help='''Provide a list of directories containing raw reads from samples that you do NOT want to download again. ''',
+        default=None
+        )
+    parser.add_argument(
+        '--finished_directory_list','-fdl',type=str,nargs='+',
+        help='''Provide a list of directories containing raw reads from samples that you do NOT want to download again. Any named subdirectory in this folder will
+		also be skipped, such as finished assembly downloads.''',
+        default=None
+        )
+    args = parser.parse_args()
+	output_dir_assembly = args.output_dir + 'assemblies/'
+	for p in [args.output_dir,args.temp,output_dir_assembly]:
+		if p is not None and not os.path.isdir(p):
+			subprocess.run(['mkdir','-p',p])
+	finished_name_list = make_finished_list(args.finished_directory_list)
+    master(input_file=args.input,temp_dir=args.temp,output_dir=args.output_dir,finished_list = finished_name_list)
 
 if __name__ == "__main__":
-	inp = '/nfs/turbo/umms-esnitkin/Project_Cauris/Analysis/2024_Pipeline_testing/2025-07-17_public/treereduce/mdhhs_accessions_dltable_2025-08-06.csv'
-	outp = '/nfs/turbo/umms-esnitkin/Project_Cauris/Analysis/2024_Pipeline_testing/2025-07-17_public/mdhhs_public/mdhhs_all_2025-08-06/'
-	temp = '/nfs/turbo/umms-esnitkin/Project_Cauris/Analysis/2024_Pipeline_testing/2025-07-17_public/mdhhs_public/temp/'
-	outp_assembly = '/nfs/turbo/umms-esnitkin/Project_Cauris/Analysis/2024_Pipeline_testing/2025-07-17_public/mdhhs_public/mdhhs_all_2025-08-06/assembly/'
-	#inp = '/scratch/esnitkin_root/esnitkin0/jjhale/treereduce/sra_run_list_t30.tsv'
-	#outp = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/'
-	#temp = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/temp/'
-	#outp_assembly = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/assembly/'
-	for p in [outp,temp,outp_assembly]:
-		if not os.path.isdir(p):
-			subprocess.run(['mkdir','-p',p])
-	#raw_data_list = []
-	# location of currently-downloaded reads for this batch
-	#raw_data_list.append('/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t30_04-25-25/')
-	# location of passed and failed t60 samples
-	#raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/passed_qc_samples')
-	#raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-10_ncbiPathogen_t60_v1/failed_qc_samples')
-	# location of passed and failed t40 samples
-	#raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-28_ncbiPathogen_t40_v1/passed_qc_samples')
-	#raw_data_list.append('/nfs/turbo/umms-esnitkin/Project_Cauris/Sequence_data/illumina_fastq/2025-03-28_ncbiPathogen_t40_v1/failed_qc_samples')
-	# location of currently-downloaded assemblies for this batch
-	#raw_assembly_dir1 = '/scratch/esnitkin_root/esnitkin0/jjhale/public/c_auris_ncbi_pathogen/sra_t40_03-19-25/assemblies/'
-	# use these paths to determine the samples that have already been downloaded
-	#finl = make_finished_list(raw_data_list)
-	#finl_a = make_finished_assembly_list(raw_assembly_dir1)
-	#finl.update(finl_a)
-	main(input_file=inp,temp_dir=temp,output_dir=outp,finished_list = [])
-
+	main()
