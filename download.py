@@ -92,40 +92,35 @@ def check_run_list(raw_data_dir):
 	return(finished_list)
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        '--input','-i',type=str,
-        help='''Provide a one-column tab-separated file consisting of run types, accession numbers, and phylogeny trees. See the provided example for formatting.''',
-        required=True
-        )
-    parser.add_argument(
-        '--temp','-t',type=str,
-        help='''Provide a path to a temporary directory.''',
-        default='./temp/'
-        )
-    parser.add_argument(
-        '--output_dir','-od',type=str,
-        help='''Provide a path to a directory where the downloaded files will be stored.''',
-        required=True
-        )
-    parser.add_argument(
-        '--finished_directory_list_reads','-fdlr',type=str,nargs='+',
-        help='''Provide a list of directories containing raw reads from samples that you do NOT want to download again. ''',
-        default=None
-        )
-    parser.add_argument(
-        '--finished_directory_list','-fdl',type=str,nargs='+',
-        help='''Provide a list of directories containing raw reads from samples that you do NOT want to download again. Any named subdirectory in this folder will
+	parser = argparse.ArgumentParser()
+	parser.add_argument(
+		'--input','-i',type=str,
+		help='''Provide a one-column tab-separated file consisting of run types, accession numbers, and phylogeny trees. See the provided example for formatting.''',
+		required=True
+		)
+	parser.add_argument(
+		'--temp','-t',type=str,
+		help='''Provide a path to a temporary directory.''',
+		default='./temp/'
+		)
+	parser.add_argument(
+		'--output_dir','-od',type=str,
+		help='''Provide a path to a directory where the downloaded files will be stored.''',
+		required=True
+		)
+	parser.add_argument(
+		'--finished_directory_list','-fdl',type=str,nargs='+',
+		help='''Provide a list of directories containing raw reads from samples that you do NOT want to download again. Any named subdirectory in this folder will
 		also be skipped, such as finished assembly downloads.''',
-        default=None
-        )
-    args = parser.parse_args()
+		default=None
+		)
+	args = parser.parse_args()
 	output_dir_assembly = args.output_dir + 'assemblies/'
 	for p in [args.output_dir,args.temp,output_dir_assembly]:
 		if p is not None and not os.path.isdir(p):
 			subprocess.run(['mkdir','-p',p])
 	finished_name_list = make_finished_list(args.finished_directory_list)
-    master(input_file=args.input,temp_dir=args.temp,output_dir=args.output_dir,finished_list = finished_name_list)
+	master(input_file=args.input,temp_dir=args.temp,output_dir=args.output_dir,finished_list = finished_name_list)
 
 if __name__ == "__main__":
 	main()
