@@ -6,4 +6,4 @@ The order of scripts to run is reduce.py -> convert.py -> download.py
 
 For the download script, both sratoolkit and NCBI datasets need to be installed.
 
-These scripts were primarily used to subset the Candida auris isolates NCBI Pathogens Detection database.
+These scripts were primarily used to subset the Candida auris isolates downloaded from the NCBI Pathogens Detection database.
